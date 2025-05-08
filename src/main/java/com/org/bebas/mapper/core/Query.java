@@ -9,6 +9,7 @@ import com.org.bebas.core.model.BaseModel;
 import com.org.bebas.mapper.utils.ExtMapperUtil;
 import com.org.bebas.mapper.utils.ModelUtil;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -49,6 +50,14 @@ public interface Query<Model extends BaseModel> {
      * @return
      */
     Number sumByColumn(String columnName, QueryWrapper<Model> wrapper);
+
+    BigDecimal selectFieldSum(String columnName, QueryWrapper<Model> wrapper);
+
+    default BigDecimal sumDecimal(Func1<Model, Object> func, Model model) {
+        String fieldName = LambdaUtil.getFieldName(func);
+        String fieldNameColumn = ModelUtil.humpToLine(fieldName);
+        return selectFieldSum(fieldNameColumn, ExtMapperUtil.modelToWrapper(model));
+    }
 
     default Number sum(Func1<Model, Object> func, Model model) {
         String fieldName = LambdaUtil.getFieldName(func);

@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -136,4 +137,15 @@ public abstract class ServiceImpl<Mapper extends BaseMapper<Model>, Model extend
         return (Number) ReflectUtil.getFieldValue(one, columnAttrName);
     }
 
+    @Override
+    public BigDecimal selectFieldSum(String columnName, QueryWrapper<Model> wrapper) {
+        Assert.notEmpty(columnName, () -> new BebasMapperException("sum方法参数[columnName]不能为空"));
+        String columnAttrName = ModelUtil.lineToHump(columnName.toLowerCase(Locale.ROOT));
+        wrapper.select(String.format("sum(%s) as %s", columnName, columnAttrName));
+        Model one = super.getOne(wrapper);
+        if (Objects.isNull(one)) {
+            return BigDecimal.ZERO;
+        }
+        return (BigDecimal) ReflectUtil.getFieldValue(one, columnAttrName);
+    }
 }

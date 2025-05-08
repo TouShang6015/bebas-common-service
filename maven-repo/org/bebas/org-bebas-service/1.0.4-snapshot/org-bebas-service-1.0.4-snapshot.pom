@@ -6,7 +6,7 @@
 
     <groupId>org.bebas</groupId>
     <artifactId>org-bebas-service</artifactId>
-    <version>1.0.4-snapshots</version>
+    <version>1.0.4-snapshot</version>
 
     <repositories>
         <repository>
