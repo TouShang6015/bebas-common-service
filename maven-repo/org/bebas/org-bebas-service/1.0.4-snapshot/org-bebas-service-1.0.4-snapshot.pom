@@ -10,8 +10,12 @@
 
     <repositories>
         <repository>
-            <id>common</id>
+            <id>github-toushang6015-common</id>
             <url>https://toushang6015.github.io/bebas-common/maven-repo/</url>
+        </repository>
+        <repository>
+            <id>github-toushang6015-service</id>
+            <url>https://toushang6015.github.io/bebas-common-service/maven-repo/</url>
         </repository>
     </repositories>
     <distributionManagement>
