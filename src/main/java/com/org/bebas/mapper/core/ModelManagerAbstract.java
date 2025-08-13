@@ -7,8 +7,8 @@ import com.org.bebas.mapper.exception.BebasMapperException;
 import com.org.bebas.mapper.utils.ReflectUtil;
 
 /**
- * @author Wuhao
- * @date 2022/7/17 15:56
+ * @author WuHao
+ * @since 2022/7/17 15:56
  */
 public abstract class ModelManagerAbstract<Mapper extends BaseMapper<Model>, Model extends BaseModel> extends ServiceImpl<Mapper, Model> implements ModelManager<Model> {
 

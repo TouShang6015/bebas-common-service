@@ -29,7 +29,7 @@ import java.util.Objects;
  * service服务层增强类 缓存层
  *
  * @author WuHao
- * @date 2022/5/13 15:52
+ * @since 2022/5/13 15:52
  */
 public abstract class ServiceImpl<Mapper extends BaseMapper<Model>, Model extends BaseModel> extends ModelManagerAbstract<Mapper, Model> implements IService<Model> {
 

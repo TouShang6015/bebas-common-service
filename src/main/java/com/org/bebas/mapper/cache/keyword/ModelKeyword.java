@@ -3,8 +3,8 @@ package com.org.bebas.mapper.cache.keyword;
 import java.io.Serializable;
 
 /**
- * @author wyj
- * @date 2022/11/14 17:11
+ * @author WuHao
+ * @since 2022/11/14 17:11
  */
 public interface ModelKeyword {
 

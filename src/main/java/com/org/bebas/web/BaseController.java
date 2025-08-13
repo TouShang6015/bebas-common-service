@@ -26,7 +26,7 @@ import java.util.List;
  * 公共控制器-基本增删改查
  *
  * @author WuHao
- * @date 2022/5/14 9:22
+ * @since 2022/5/14 9:22
  */
 public abstract class BaseController<S extends IService<M>, M extends BaseModel> {
 

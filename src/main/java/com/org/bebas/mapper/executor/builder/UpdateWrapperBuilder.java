@@ -7,8 +7,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * @author wyj
- * @date 2022/8/19 11:20
+ * @author WuHao
+ * @since 2022/8/19 11:20
  */
 public class UpdateWrapperBuilder<Model extends BaseModel> {
 

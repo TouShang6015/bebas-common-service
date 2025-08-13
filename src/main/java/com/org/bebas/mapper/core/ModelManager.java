@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.org.bebas.core.model.BaseModel;
 
 /**
- * @author Wuhao
- * @date 2022/7/17 15:49
+ * @author WuHao
+ * @since 2022/7/17 15:49
  */
 public interface ModelManager<Model extends BaseModel> extends IService<Model> {
 

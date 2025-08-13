@@ -6,8 +6,8 @@ import com.org.bebas.mapper.cache.keyword.ModelKeyword;
 import java.io.Serializable;
 
 /**
- * @author Wuhao
- * @date 2022/7/17 2:09
+ * @author WuHao
+ * @since 2022/7/17 2:09
  */
 public interface ICacheService<Model extends BaseModel> {
 

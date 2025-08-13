@@ -7,8 +7,8 @@ import com.org.bebas.mapper.utils.ExtMapperUtil;
 import java.util.function.Consumer;
 
 /**
- * @author wyj
- * @date 2022/8/19 11:20
+ * @author WuHao
+ * @since 2022/8/19 11:20
  */
 public class QueryWrapperBuilder<Model extends BaseModel> extends QueryWrapperBuilderAbstract<Model, QueryWrapperBuilder<Model>, QueryWrapper<Model>> {
 

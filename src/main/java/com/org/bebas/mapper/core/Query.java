@@ -13,8 +13,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * @author Wuhao
- * @date 2022/8/18 23:56
+ * @author WuHao
+ * @since 2022/8/18 23:56
  */
 public interface Query<Model extends BaseModel> {
 

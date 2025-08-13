@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * mapper增强工具类
  *
  * @author WuHao
- * @date 2022/5/13 19:24
+ * @since 2022/5/13 19:24
  */
 @Slf4j
 public class ExtMapperUtil {

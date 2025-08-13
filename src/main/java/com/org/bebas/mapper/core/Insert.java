@@ -5,8 +5,8 @@ import com.org.bebas.core.model.BaseModel;
 import java.util.List;
 
 /**
- * @author Wuhao
- * @date 2022/8/18 23:59
+ * @author WuHao
+ * @since 2022/8/18 23:59
  */
 public interface Insert<Model extends BaseModel> {
 
