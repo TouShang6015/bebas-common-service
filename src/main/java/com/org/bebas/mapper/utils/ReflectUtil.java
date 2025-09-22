@@ -1,6 +1,7 @@
 package com.org.bebas.mapper.utils;
 
-import cn.hutool.core.lang.Assert;
+
+import org.springframework.util.Assert;
 
 import java.lang.reflect.ParameterizedType;
 
@@ -10,7 +11,7 @@ import java.lang.reflect.ParameterizedType;
  * @author WuHao
  * @since 2023/7/26 8:46
  */
-public class ReflectUtil extends cn.hutool.core.util.ReflectUtil {
+public class ReflectUtil {
 
     /**
      * 获得类中泛型类型字节码class

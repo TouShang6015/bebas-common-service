@@ -1,7 +1,5 @@
 package com.org.bebas.web;
 
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -21,6 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 公共控制器-基本增删改查
@@ -37,10 +36,10 @@ public abstract class BaseController<S extends IService<M>, M extends BaseModel>
 
     @ResponseBody
     @GetMapping("/baseQueryById/{id}")
-    @ApiOperation(value = "基础功能-通过ID查询单条记录", notes = "基础功能-通过ID查询单条记录", httpMethod = "GET", response = Result.class)
+    @ApiOperation(value = "基础功能-通过ID查询单条记录")
     @ApiOperationSupport(order = 1)
     protected Result baseQueryById(@PathVariable("id") Long id) {
-        if (ObjectUtil.isNull(id) || id <= 0L) {
+        if (Objects.isNull(id) || id <= 0L) {
             return Result.fail("id不能为空！");
         }
         M m = service.getById(id);
@@ -49,10 +48,10 @@ public abstract class BaseController<S extends IService<M>, M extends BaseModel>
 
     @ResponseBody
     @PostMapping("/baseQueryByParam")
-    @ApiOperation(value = "基础功能-条件查询", httpMethod = "POST", response = Result.class)
+    @ApiOperation(value = "基础功能-条件查询")
     @ApiOperationSupport(order = 2)
     protected Result baseQueryByParam(@RequestBody(required = false) M param) {
-        if (ObjectUtil.isNull(param)) {
+        if (Objects.isNull(param)) {
             param = service.modelInstance();
         }
         List<M> list = service.listByParam(param);
@@ -61,10 +60,10 @@ public abstract class BaseController<S extends IService<M>, M extends BaseModel>
 
     @ResponseBody
     @PostMapping("/baseQueryPageByParam")
-    @ApiOperation(value = "基础功能-条件查询分页", httpMethod = "POST", response = Result.class)
+    @ApiOperation(value = "基础功能-条件查询分页")
     @ApiOperationSupport(order = 3)
     protected Result baseQueryPageByParam(@RequestBody(required = false) M param) {
-        if (ObjectUtil.isNull(param)) {
+        if (Objects.isNull(param)) {
             param = service.modelInstance();
         }
         IPage<M> page = PageUtil.pageBean(param);
@@ -73,7 +72,7 @@ public abstract class BaseController<S extends IService<M>, M extends BaseModel>
 
     @ResponseBody
     @PostMapping("/baseAdd")
-    @ApiOperation(value = "基础功能-新增", httpMethod = "POST", response = Result.class)
+    @ApiOperation(value = "基础功能-新增")
     @ApiOperationSupport(order = 4)
     protected <DTO> Result baseAdd(@RequestBody DTO m) {
         M param = JSON.parseObject(JSON.toJSONString(m), service.getModelClass());
@@ -85,7 +84,7 @@ public abstract class BaseController<S extends IService<M>, M extends BaseModel>
 
     @ResponseBody
     @PutMapping("/baseEdit")
-    @ApiOperation(value = "基础功能-修改", httpMethod = "PUT", response = Result.class)
+    @ApiOperation(value = "基础功能-修改")
     @ApiOperationSupport(order = 5)
     protected <DTO> Result baseEdit(@RequestBody @Validated(value = {GroupUpdate.class}) DTO m) {
         M param = JSON.parseObject(JSON.toJSONString(m), service.getModelClass());
@@ -97,10 +96,10 @@ public abstract class BaseController<S extends IService<M>, M extends BaseModel>
 
     @ResponseBody
     @DeleteMapping("/baseDeleteByIds/{ids}")
-    @ApiOperation(value = "基础功能-根据主键id删除(多个id根据,分隔)", httpMethod = "DELETE", response = Result.class)
+    @ApiOperation(value = "基础功能-根据主键id删除(多个id根据,分隔)")
     @ApiOperationSupport(order = 6)
     protected Result baseDeleteByIds(@PathVariable("ids") String ids) {
-        if (StrUtil.isEmpty(ids)) {
+        if (StringUtils.isEmpty(ids)) {
             return Result.fail("删除条件id不能为空");
         }
         String[] idsArr = ids.split(StringPool.COMMA);

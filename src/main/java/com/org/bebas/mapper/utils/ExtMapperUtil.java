@@ -1,11 +1,5 @@
 package com.org.bebas.mapper.utils;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.text.StrBuilder;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.ReflectUtil;
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -17,16 +11,15 @@ import com.org.bebas.mapper.exception.BebasMapperException;
 import com.org.bebas.utils.StringUtils;
 import com.org.bebas.utils.bean.BeanUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -48,7 +41,7 @@ public class ExtMapperUtil {
      * @return
      */
     public static String getCacheTableAllListKey(Class<? extends BaseModel> c) {
-        return StrBuilder.create()
+        return new StringBuilder()
                 .append(RedisConstant.NameSpace.MODULE_DATA)
                 .append(RedisConstant.NameSpace.TABLE)
                 .append(ModelUtil.getTableName(c)).append(":")
@@ -63,7 +56,7 @@ public class ExtMapperUtil {
      * @return
      */
     public static String getCacheTableByIdKey(Class<? extends BaseModel> c, Serializable id) {
-        return StrBuilder.create()
+        return new StringBuilder()
                 .append(RedisConstant.NameSpace.MODULE_DATA)
                 .append(RedisConstant.NameSpace.TABLE)
                 .append(ModelUtil.getTableName(c)).append(":")
@@ -81,10 +74,12 @@ public class ExtMapperUtil {
      */
     public static <T extends BaseModel> String getWrapperQueryWhereSql(Wrapper<T> wrapper) {
         String statementSql = wrapper.getTargetSql();       // 带占位符的sql
-        if (StrUtil.isEmpty(statementSql)) return null;
+        if (StringUtils.isEmpty(statementSql))
+            return null;
         Map paramMap = ((LambdaQueryWrapper<T>) wrapper).getParamNameValuePairs();
-        if (MapUtil.isEmpty(paramMap)) return null;
-        List<Object> params = CollUtil.newArrayList();
+        if (MapUtils.isEmpty(paramMap))
+            return null;
+        List<Object> params = new ArrayList<>();
         paramMap.keySet().forEach(key -> params.add(paramMap.get(key)));
         return StringUtils.replace(statementSql, "\\?", params);
     }
@@ -139,7 +134,7 @@ public class ExtMapperUtil {
         }
         /* 将空字符串置空 */
         M model = BeanUtil.emptyToNull(m);
-        if (ObjectUtil.isNull(model))
+        if (Objects.isNull(model))
             return queryWrapper.setEntity(model);
         // 条件封装
         conditionSelect(queryWrapper, model);
@@ -172,14 +167,14 @@ public class ExtMapperUtil {
     public static <M extends BaseModel> void conditionSelect(QueryWrapper<M> wrapper, M model) {
         /* 获取自定义查询条件 */
         Map<String, String> queryCondition = model.getQueryCondition();
-        if (ObjectUtil.isNotNull(queryCondition)) {
+        if (Objects.nonNull(queryCondition)) {
             /* 根据key遍历，满足条件的字段会被置空（默认是EQ比较） */
             queryCondition.keySet().forEach(modelName -> {
                 String condition = queryCondition.get(modelName);
                 String columnName = ModelUtil.humpToLine(modelName);
                 if (condition.equals(ConditionEnum.IN.name())
                         || condition.equals(ConditionEnum.OR.name())
-                        || ObjectUtil.isNotNull(BeanUtil.valueByPropertyName(model, modelName))) {
+                        || Objects.nonNull(BeanUtil.valueByPropertyName(model, modelName))) {
                     // 封装查询条件
                     handleCondition(condition, wrapper, columnName, model, modelName);
                 }
@@ -212,7 +207,7 @@ public class ExtMapperUtil {
     public static <M extends BaseModel> void sortCondition(QueryWrapper<M> wrapper, M model) {
         /* 获取自定义排序参数 */
         Map<String, Boolean> sortConditionMap = model.getSortCondition();
-        if (ObjectUtil.isNotNull(sortConditionMap)) {
+        if (Objects.nonNull(sortConditionMap)) {
             Set<String> sortConditionSet = sortConditionMap.keySet();
             sortConditionSet.forEach(sortCondition -> {
                 String columnName = ModelUtil.humpToLine(sortCondition);
@@ -279,7 +274,14 @@ public class ExtMapperUtil {
                         condition.equalsIgnoreCase(ConditionEnum.LE.name())
         ) {
             String columnNameDelSuffix = filterSuffix.apply(columnName);
-            Object val = ReflectUtil.getFieldValue(model, modelName);
+
+            Object val = null;
+            try {
+                val = FieldUtils.readField(model, columnName, true);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+
             OpenRunnable.run(val, Objects::nonNull, v -> {
                 if (condition.equalsIgnoreCase(ConditionEnum.GT.name())) {
                     queryWrapper.gt(columnNameDelSuffix, v);

@@ -1,6 +1,5 @@
 package com.org.bebas.mapper.utils;
 
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.org.bebas.constants.RedisConstant;
@@ -8,6 +7,7 @@ import com.org.bebas.core.model.BaseModel;
 import com.org.bebas.core.security.SecurityBaseUtil;
 import com.org.bebas.mapper.exception.BebasMapperException;
 import com.org.bebas.utils.DateUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.Optional;
@@ -56,7 +56,7 @@ public class ModelUtil {
         for (Annotation annotation : annotations) {
             if (annotation instanceof TableName) {
                 String tableName = ((TableName) annotation).value();
-                if (StrUtil.isEmpty(tableName))
+                if (StringUtils.isEmpty(tableName))
                     throw new BebasMapperException("ModelUtil error ：tableName为空!");
                 return tableName;
             }
@@ -84,9 +84,9 @@ public class ModelUtil {
      */
     public static <Model extends BaseModel> void initModel(Model model, boolean isCreate) {
         Optional.ofNullable(model).ifPresent(m -> {
-            if (StrUtil.isEmpty(model.getCreateTime()))
+            if (StringUtils.isEmpty(model.getCreateTime()))
                 model.setCreateTime(null);
-            if (StrUtil.isEmpty(model.getUpdateTime()))
+            if (StringUtils.isEmpty(model.getUpdateTime()))
                 model.setUpdateTime(null);
             /*  设置主键id */
 //            if (Objects.isNull(m.getId()) || m.getId() <= 0L) {
@@ -94,10 +94,10 @@ public class ModelUtil {
 //            }
             if (isCreate) {
                 /* 设置创建时间 */
-                if (StrUtil.isEmpty(m.getCreateTime())) {
+                if (StringUtils.isEmpty(m.getCreateTime())) {
                     m.setCreateTime(DateUtils.nowDateFormat());
                     /* 设置创建者 */
-                    if (StrUtil.isEmpty(m.getCreateOper())) {
+                    if (StringUtils.isEmpty(m.getCreateOper())) {
                         try {
                             m.setCreateOper(String.valueOf(SecurityBaseUtil.getUserId()));
                         } catch (Exception ignored) {
@@ -124,9 +124,9 @@ public class ModelUtil {
      */
     public static <Model extends BaseModel> void initModel(Model model, boolean isCreate, String time, String oper) {
         Optional.ofNullable(model).ifPresent(m -> {
-            if (StrUtil.isEmpty(model.getCreateTime()))
+            if (StringUtils.isEmpty(model.getCreateTime()))
                 model.setCreateTime(time);
-            if (StrUtil.isEmpty(model.getUpdateTime()))
+            if (StringUtils.isEmpty(model.getUpdateTime()))
                 model.setUpdateTime(time);
             /*  设置主键id */
 //            if (Objects.isNull(m.getId()) || m.getId() <= 0L) {
@@ -134,10 +134,10 @@ public class ModelUtil {
 //            }
             if (isCreate) {
                 /* 设置创建时间 */
-                if (StrUtil.isEmpty(m.getCreateTime())) {
+                if (StringUtils.isEmpty(m.getCreateTime())) {
                     m.setCreateTime(time);
                     /* 设置创建者 */
-                    if (StrUtil.isEmpty(m.getCreateOper())) {
+                    if (StringUtils.isEmpty(m.getCreateOper())) {
                         try {
                             m.setCreateOper(oper);
                         } catch (Exception ignored) {

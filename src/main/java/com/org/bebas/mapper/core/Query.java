@@ -1,16 +1,15 @@
 package com.org.bebas.mapper.core;
 
-import cn.hutool.core.lang.func.Func1;
-import cn.hutool.core.lang.func.LambdaUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.org.bebas.core.model.BaseModel;
 import com.org.bebas.mapper.utils.ExtMapperUtil;
 import com.org.bebas.mapper.utils.ModelUtil;
+import com.org.bebas.utils.bean.ReflectUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author WuHao
@@ -53,14 +52,14 @@ public interface Query<Model extends BaseModel> {
 
     BigDecimal selectFieldSum(String columnName, QueryWrapper<Model> wrapper);
 
-    default BigDecimal sumDecimal(Func1<Model, Object> func, Model model) {
-        String fieldName = LambdaUtil.getFieldName(func);
+    default BigDecimal sumDecimal(Function<Model, Object> func, Model model) {
+        String fieldName = ReflectUtils.getFieldName(func);
         String fieldNameColumn = ModelUtil.humpToLine(fieldName);
         return selectFieldSum(fieldNameColumn, ExtMapperUtil.modelToWrapper(model));
     }
 
-    default Number sum(Func1<Model, Object> func, Model model) {
-        String fieldName = LambdaUtil.getFieldName(func);
+    default Number sum(Function<Model, Object> func, Model model) {
+        String fieldName = ReflectUtils.getFieldName(func);
         String fieldNameColumn = ModelUtil.humpToLine(fieldName);
         return sumByColumn(fieldNameColumn, ExtMapperUtil.modelToWrapper(model));
     }

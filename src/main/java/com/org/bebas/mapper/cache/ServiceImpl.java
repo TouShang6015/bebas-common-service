@@ -1,8 +1,5 @@
 package com.org.bebas.mapper.cache;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.lang.Assert;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -13,17 +10,17 @@ import com.org.bebas.mapper.exception.BebasMapperException;
 import com.org.bebas.mapper.service.IService;
 import com.org.bebas.mapper.utils.ExtMapperUtil;
 import com.org.bebas.mapper.utils.ModelUtil;
-import com.org.bebas.mapper.utils.ReflectUtil;
 import com.org.bebas.utils.DateUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * service服务层增强类 缓存层
@@ -73,6 +70,7 @@ public abstract class ServiceImpl<Mapper extends BaseMapper<Model>, Model extend
         return super.save(entity);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveBatch(Collection<Model> entityList) {
         if (CollectionUtils.isEmpty(entityList)) {
@@ -86,10 +84,11 @@ public abstract class ServiceImpl<Mapper extends BaseMapper<Model>, Model extend
             } catch (Exception ignored) {
             }
             final String finalUserId = userId;
-            for (Model item : entityList) {
+            List<Model> list = new ArrayList<>(entityList);
+            for (Model item : list) {
                 ModelUtil.initModel(item, true, time, finalUserId);
             }
-            CollUtil.split(entityList, 100).forEach(super::saveBatch);
+            ListUtils.partition(list, 100).forEach(super::saveBatch);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,25 +126,39 @@ public abstract class ServiceImpl<Mapper extends BaseMapper<Model>, Model extend
      */
     @Override
     public Number sumByColumn(String columnName, QueryWrapper<Model> wrapper) {
-        Assert.notEmpty(columnName, () -> new BebasMapperException("sum方法参数[columnName]不能为空"));
+        if (StringUtils.isEmpty(columnName)) {
+            throw new BebasMapperException("sum方法参数[columnName]不能为空");
+        }
+
         String columnAttrName = ModelUtil.lineToHump(columnName.toLowerCase(Locale.ROOT));
         wrapper.select(String.format("sum(%s) as %s", columnName, columnAttrName));
         Model one = super.getOne(wrapper);
         if (Objects.isNull(one)) {
             return 0;
         }
-        return (Number) ReflectUtil.getFieldValue(one, columnAttrName);
+        try {
+            return (Number) FieldUtils.readField(one, columnAttrName);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public BigDecimal selectFieldSum(String columnName, QueryWrapper<Model> wrapper) {
-        Assert.notEmpty(columnName, () -> new BebasMapperException("sum方法参数[columnName]不能为空"));
+        if (StringUtils.isEmpty(columnName)) {
+            throw new BebasMapperException("sum方法参数[columnName]不能为空");
+        }
         String columnAttrName = ModelUtil.lineToHump(columnName.toLowerCase(Locale.ROOT));
         wrapper.select(String.format("sum(%s) as %s", columnName, columnAttrName));
         Model one = super.getOne(wrapper);
         if (Objects.isNull(one)) {
             return BigDecimal.ZERO;
         }
-        return (BigDecimal) ReflectUtil.getFieldValue(one, columnAttrName);
+
+        try {
+            return (BigDecimal) FieldUtils.readField(one, columnAttrName);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
